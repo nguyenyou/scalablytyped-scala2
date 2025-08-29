@@ -65,3 +65,7 @@ object logging extends BaseModule
 object ts extends BaseModule {
   def moduleDeps = Seq(core, logging)
 }
+
+object scalajs extends BaseModule {
+  def moduleDeps = Seq(core, logging)
+}
