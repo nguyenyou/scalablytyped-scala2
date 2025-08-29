@@ -89,3 +89,8 @@ object `importer-portable` extends BaseModule with BuildInfo {
 object importer extends BaseModule {
   def moduleDeps = Seq(`importer-portable`)
 }
+
+object runtime extends ScalaJSModule {
+  def scalaVersion = Versions.scala2
+  def scalaJSVersion = Versions.sjs
+}
