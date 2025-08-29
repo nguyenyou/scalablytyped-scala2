@@ -94,3 +94,7 @@ object runtime extends ScalaJSModule {
   def scalaVersion = Versions.scala2
   def scalaJSVersion = Versions.sjs
 }
+
+object cli extends BaseModule {
+  def moduleDeps = Seq(importer)
+}
