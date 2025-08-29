@@ -1,0 +1,63 @@
+//| mill-version: 1.0.4
+//| mvnDeps: ["com.lihaoyi::mill-contrib-buildinfo:$MILL_VERSION"]
+
+import mill.*, scalalib.*
+import os.*
+import mill.contrib.buildinfo.BuildInfo
+import mill.scalajslib.*
+import mill.scalajslib.api.*
+
+object Versions {
+    val scala2 = "2.12.18"
+    val sjs = "1.19.0"
+    val sjsdom = "2.8.0"
+    val laminar = "17.2.1"
+    val sourcecode = "0.3.1"
+    val fansi = "0.4.0"
+    val scalaParserCombinators = "1.1.2"
+    val scalaXml = "2.2.0"
+    val scalap = "2.12.18"
+    val ammonite = "2.4.0"
+    val coursier = "2.1.8"
+    val scopt = "4.1.0"
+    val circe = "0.13.0-shaded-2"
+    val bloop = "1.5.4"
+    val osLib = "0.9.3"
+    val utest = "0.9.0"
+    val aws = "2.15.28"
+}
+
+trait BaseModule extends ScalaModule {
+  def scalaVersion = Versions.scala2
+  def mvnDeps = Seq(
+    // Core Libraries
+    mvn"com.lihaoyi::ammonite-ops:${Versions.ammonite}",
+    mvn"com.lihaoyi::os-lib:${Versions.osLib}",
+    mvn"com.lihaoyi::sourcecode:${Versions.sourcecode}",
+    mvn"com.lihaoyi::fansi:${Versions.fansi}",
+    
+    // Parsing & Language
+    mvn"org.scala-lang.modules::scala-parser-combinators:${Versions.scalaParserCombinators}",
+    mvn"org.scala-lang.modules::scala-xml:${Versions.scalaXml}",
+    mvn"org.scala-lang:scalap:${Versions.scalap}",
+    
+    // JSON Processing (Circe)
+    mvn"org.scalablytyped.circe013::circe-generic:${Versions.circe}",
+    mvn"org.scalablytyped.circe013::circe-jackson29:${Versions.circe}",
+    
+    // Build & Development Tools
+    mvn"ch.epfl.scala::bloop-frontend:${Versions.bloop}",
+    mvn"io.get-coursier::coursier:${Versions.coursier}",
+    mvn"com.github.scopt::scopt:${Versions.scopt}",
+    
+    // Cloud & Storage
+    mvn"software.amazon.awssdk:s3:${Versions.aws}"
+  )
+
+  object test extends ScalaTests {
+    def mvnDeps = Seq(mvn"com.lihaoyi::utest:${Versions.utest}")
+    def testFramework = "utest.runner.Framework"
+  }
+}
+
+object core extends BaseModule

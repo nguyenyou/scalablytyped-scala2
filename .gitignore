@@ -1,0 +1,14 @@
+*.class
+*.log
+target/
+.idea/
+.metals/
+.bloop
+.DS_Store
+release-temp/
+.bsp/
+out
+node_modules
+generated-sources
+my-sources
+dist
