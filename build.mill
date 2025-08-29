@@ -69,3 +69,7 @@ object ts extends BaseModule {
 object scalajs extends BaseModule {
   def moduleDeps = Seq(core, logging)
 }
+
+object phases extends BaseModule {
+  def moduleDeps = Seq(core, logging)
+}
