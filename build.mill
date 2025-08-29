@@ -73,3 +73,15 @@ object scalajs extends BaseModule {
 object phases extends BaseModule {
   def moduleDeps = Seq(core, logging)
 }
+
+object `importer-portable` extends BaseModule with BuildInfo {
+  def moduleDeps = Seq(phases, ts, scalajs)
+
+ 
+  val buildInfoPackageName = "org.scalablytyped.converter.internal"
+
+  def buildInfoMembers = Seq(
+    BuildInfo.Value("gitSha", os.proc("git", "rev-parse", "HEAD").call().out.trim()),
+    BuildInfo.Value("version", "0.1.0"),
+  )
+}
