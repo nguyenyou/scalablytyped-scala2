@@ -62,3 +62,6 @@ trait BaseModule extends ScalaModule {
 
 object core extends BaseModule
 object logging extends BaseModule
+object ts extends BaseModule {
+  def moduleDeps = Seq(core, logging)
+}
