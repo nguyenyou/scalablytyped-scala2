@@ -19,6 +19,22 @@ import scala.util.{Failure, Success, Try}
 
 object Tracing {
 
+  val DefaultOptions = ConversionOptions(
+    useScalaJsDomTypes = true,
+    outputPackage = Name.typings,
+    enableScalaJsDefined = Selection.All,
+    flavour = Flavour.Normal,
+    ignored = SortedSet("typescript"),
+    stdLibs = SortedSet("es6"),
+    expandTypeMappings = EnabledTypeMappingExpansion.DefaultSelection,
+    versions = Versions(Versions.Scala3, Versions.ScalaJs1),
+    organization = "org.scalablytyped",
+    enableReactTreeShaking = Selection.None,
+    enableLongApplyMethod = false,
+    privateWithin = None,
+    useDeprecatedModuleNames = false
+  )
+
   /** Generate only Scala source files without sbt project structure
     */
   def generateSourcesOnly(): Either[Map[LibTsSource, Either[Throwable, String]], Set[os.Path]] = {
@@ -39,7 +55,16 @@ object Tracing {
       ret
     }
     println(s"Wanted libs: $wantedLibs")
-       
+    val bootstrapped = Bootstrap.fromNodeModules(InFolder(nodeModulesPath), DefaultOptions, wantedLibs)
+
+    val sources: Vector[LibTsSource] = {
+      bootstrapped.initialLibs match {
+        case Left(unresolved) => sys.error(unresolved.msg)
+        case Right(initial)   => None.foldLeft(initial)(_ :+ _)
+      }
+    }
+
+    println(s"Sources: ${sources.map(_.libName.value).mkString(", ")}")
 
     return Right(Set.empty)
   }
