@@ -11,3 +11,10 @@ mill cli.runMain org.scalablytyped.converter.cli.SourceOnlyMain -o ./my-sources
 ```sh
 ./mill cli.runMain org.scalablytyped.converter.cli.ImportScalajsDefinitions
 ```
+
+## Trace
+
+```
+```sh
+mill cli.runMain org.scalablytyped.converter.cli.Tracing
+```
