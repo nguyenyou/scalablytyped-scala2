@@ -137,6 +137,7 @@ object SourceOnlyMain {
         case otherwise => otherwise
       }
 
+  
     val bootstrapped = Bootstrap.fromNodeModules(InFolder(nodeModulesPath), config.conversion, wantedLibs)
 
     val sources: Vector[LibTsSource] = {
