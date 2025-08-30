@@ -4,25 +4,13 @@ import com.olvind.logging.{stdout, storing, LogLevel, Logger}
 import fansi.{Attr, Color, Str}
 import org.scalablytyped.converter.internal.importer._
 import org.scalablytyped.converter.internal.maps._
-import org.scalablytyped.converter.internal.phases.{
-  PhaseListener,
-  PhaseRes,
-  PhaseRunner,
-  RecPhase
-}
+import org.scalablytyped.converter.internal.phases.{PhaseListener, PhaseRes, PhaseRunner, RecPhase}
 import org.scalablytyped.converter.internal.scalajs._
 import org.scalablytyped.converter.internal.scalajs.Minimization
 import org.scalablytyped.converter.internal.IArray
 import org.scalablytyped.converter.internal.ts.CalculateLibraryVersion.PackageJsonOnly
 import org.scalablytyped.converter.internal.ts.{PackageJson, TsIdentLibrary}
-import org.scalablytyped.converter.internal.{
-  constants,
-  files,
-  sets,
-  BuildInfo,
-  InFolder,
-  Json
-}
+import org.scalablytyped.converter.internal.{constants, files, sets, BuildInfo, InFolder, Json}
 import org.scalablytyped.converter.{Flavour, Selection}
 import scopt.{OParser, OParserBuilder, Read}
 
@@ -33,8 +21,26 @@ object Tracing {
 
   /** Generate only Scala source files without sbt project structure
     */
-  def generateSourcesOnly()
-      : Either[Map[LibTsSource, Either[Throwable, String]], Set[os.Path]] = {
+  def generateSourcesOnly(): Either[Map[LibTsSource, Either[Throwable, String]], Set[os.Path]] = {
+    val inDirectory = os.pwd
+    lazy val paths = new Main.Paths(inDirectory)
+    val packageJsonPath = paths.packageJson.getOrElse(sys.error(s"${inDirectory} does not contain package.json"))
+    val nodeModulesPath = paths.node_modules.getOrElse(sys.error(s"${inDirectory} does not contain node_modules"))
+    println(s"Package JSON path: $packageJsonPath")
+    println(s"Node modules path: $nodeModulesPath")
+
+    val packageJson = Json.force[PackageJson](packageJsonPath)
+
+    val wantedLibs: SortedSet[TsIdentLibrary] = {
+      val fromPackageJson = packageJson.allLibs(false, peer = true).keySet
+      require(fromPackageJson.nonEmpty, "No libraries found in package.json")
+      val ret = fromPackageJson
+      require(ret.nonEmpty, s"All libraries in package.json ignored")
+      ret
+    }
+    println(s"Wanted libs: $wantedLibs")
+       
+
     return Right(Set.empty)
   }
 
