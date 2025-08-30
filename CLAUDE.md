@@ -1,3 +1,113 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+Scalablytyped is a sophisticated Scala tool that converts TypeScript definition files (`.d.ts`) into Scala.js type definitions, enabling Scala.js developers to use JavaScript libraries with full type safety.
+
+## Build System & Commands
+
+This project uses **Mill** as the primary build tool for Scala modules and **Bun** for TypeScript/frontend components.
+
+### Core Development Commands
+
+**Mill Commands (Scala modules):**
+```bash
+# Build all modules
+mill __.compile
+
+# Run tests for all modules
+mill __.test
+
+# Run specific module tests
+mill core.test
+mill importer.test
+
+# Generate sources only (common development task)
+mill cli.runMain org.scalablytyped.converter.cli.SourceOnlyMain -o ./my-sources
+
+# Import Scala.js definitions (full pipeline)
+mill cli.runMain org.scalablytyped.converter.cli.ImportScalajsDefinitions
+
+# Run the main CLI
+mill cli.runMain org.scalablytyped.converter.cli.Main
+
+# Clean build artifacts
+mill clean
+```
+
+**Bun Commands (TypeScript/frontend):**
+```bash
+# Install dependencies
+bun install
+
+# Run TypeScript/frontend code
+bun index.ts
+
+# Run tests (if any TypeScript tests exist)
+bun test
+
+# Build frontend components
+bun build index.ts
+```
+
+### Module Architecture
+
+The codebase follows a multi-phase pipeline architecture with these key modules:
+
+**Core Infrastructure:**
+- `core` - Fundamental data structures, utilities, and type definitions
+- `logging` - Logging infrastructure and utilities  
+- `phases` - Pipeline framework for multi-stage processing
+
+**Language Processing:**
+- `ts` - TypeScript AST representation and parsing logic
+- `scalajs` - Scala.js AST representation and code generation
+
+**Import Pipeline:**
+- `importer-portable` - Core conversion logic and phases (with build info)
+- `importer` - Full importer with CI/CD capabilities
+- `cli` - Command-line interfaces (`Main.scala`, `SourceOnlyMain.scala`, `ImportScalajsDefinitions.scala`)
+
+**Runtime:**
+- `runtime` - Scala.js runtime components (ScalaJSModule)
+
+### Module Dependencies
+
+```
+cli -> importer -> importer-portable -> (phases, ts, scalajs) -> (core, logging)
+                                                                      ^
+runtime (ScalaJSModule) -------------------------------------------|
+```
+
+## Key CLI Entry Points
+
+1. **Full Pipeline**: `mill cli.runMain org.scalablytyped.converter.cli.Main`
+2. **Source Generation Only**: `mill cli.runMain org.scalablytyped.converter.cli.SourceOnlyMain`  
+3. **Scala.js Definition Import**: `mill cli.runMain org.scalablytyped.converter.cli.ImportScalajsDefinitions`
+
+## Technology Stack
+
+- **Scala 2.12.18** with Scala.js 1.19.0
+- **Mill 1.0.4** for build management
+- **Dependencies**: Ammonite, OS-Lib, Circe, Bloop, Coursier, utest
+- **AWS S3** integration for storage
+- **Bun** for TypeScript/frontend development
+
+## Testing
+
+- Scala tests use **utest** framework: `mill __.test`
+- Test framework: `utest.runner.Framework`
+- TypeScript tests use Bun: `bun test`
+
+## Development Workflow
+
+1. The system processes TypeScript definitions through multiple phases
+2. Input sources: NPM packages, DefinitelyTyped repo, local TypeScript definitions  
+3. Output formats: Scala source files, compiled JARs, SBT projects
+4. Use `SourceOnlyMain` for development/testing, full `Main` for production builds
+
 ---
 description: Use Bun instead of Node.js, npm, pnpm, or vite.
 globs: "*.ts, *.tsx, *.html, *.css, *.js, *.jsx, package.json"
